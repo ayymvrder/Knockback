@@ -14,19 +14,22 @@ public class Main extends JavaPlugin {
 	private String craftBukkitVersion;
 	private double horizontalMultiplier = 1D;
 	private double verticalMultiplier = 1D;
+	private double enchantmentNerf = 1;
 	
 	@Override
 	public void onEnable() {
 		instance = this;
 		
 		getConfig().options().copyDefaults(true);
-		getConfig().addDefault("knockback-multiplier.horizontal", 1D);
-		getConfig().addDefault("knockback-multiplier.vertical", 1D);
+		getConfig().addDefault("multiplier.horizontal", 1D);
+		getConfig().addDefault("multiplier.vertical", 1D);
+		getConfig().addDefault("multiplier.enchantment-nerf", 1);
 		saveConfig();
 		
 		this.craftBukkitVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-		this.horizontalMultiplier = getConfig().getDouble("knockback-multiplier.horizontal");
-		this.verticalMultiplier = getConfig().getDouble("knockback-multiplier.vertical");
+		this.horizontalMultiplier = getConfig().getDouble("multiplier.horizontal");
+		this.verticalMultiplier = getConfig().getDouble("multiplier.vertical");
+		this.enchantmentNerf = getConfig().getDouble("multiplier.enchantment-nerf");
 		
 		Bukkit.getPluginManager().registerEvents(new DamageListener(), this);
 		
@@ -35,32 +38,35 @@ public class Main extends JavaPlugin {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (!sender.hasPermission("knockbackpatch.setknockback")) {
+		if (!sender.hasPermission("knockback.set")) {
 			sender.sendMessage(ChatColor.RED + "No permission.");
 			return true;
 		}
 		
-		if (args.length < 2){
-			sender.sendMessage(ChatColor.RED + "Usage: /" + label + " <horizontal multiplier> <vertical multiplier>.");
+		if (args.length < 3){
+			sender.sendMessage(ChatColor.RED + "Usage: /" + label + " <horizontal multiplier> <vertical multiplier> <enchantment nerf>.");
 			return true;
 		}
 		
 		double horizontalMultiplier = NumberUtils.toDouble(args[0], -1D);
 		double verticalMultiplier = NumberUtils.toDouble(args[1], -1D);
+		double enchantmentNerf = NumberUtils.toDouble(args[2]);
 		
-		if (horizontalMultiplier < 0D || verticalMultiplier < 0D) {
-			sender.sendMessage(ChatColor.RED + "Invalid horizontal/vertical multiplier!");
+		if (horizontalMultiplier < 0D || verticalMultiplier < 0D || enchantmentNerf <= 0) {
+			sender.sendMessage(ChatColor.RED + "Invalid multipliers!");
 			return true;
 		}
 		
 		this.horizontalMultiplier = horizontalMultiplier;
 		this.verticalMultiplier = verticalMultiplier;
+		this.enchantmentNerf = enchantmentNerf;
 		
-		getConfig().set("knockback-multiplier.horizontal", horizontalMultiplier);
-		getConfig().set("knockback-multiplier.vertical", verticalMultiplier);
+		getConfig().set("multiplier.horizontal", horizontalMultiplier);
+		getConfig().set("multiplier.vertical", verticalMultiplier);
+		getConfig().set("multiplier.vertical", enchantmentNerf);
 		saveConfig();
 		
-		sender.sendMessage(ChatColor.GREEN + "Successfully updated the knockback multipliers!");
+		sender.sendMessage(ChatColor.GREEN + "Successfully updated the multipliers!");
 		return true;
 	}
 	
@@ -86,6 +92,14 @@ public class Main extends JavaPlugin {
 
 	public void setVerticalMultiplier(double vertical) {
 		this.verticalMultiplier = vertical;
+	}
+	
+	public double getEnchantmentNerf() {
+		return enchantmentNerf;
+	}
+
+	public void setEnchantmentNerf(double nerf) {
+		this.enchantmentNerf = nerf;
 	}
 	
 }
