@@ -72,14 +72,14 @@ public class DamageListener implements Listener {
 		double horizontalMultiplier = Main.getInstance().getHorizontalMultiplier();
 		double verticalMultiplier = Main.getInstance().getVerticalMultiplier();
 		double sprintMultiplier = damager.isSprinting() ? 0.8D : 0.5D;
-		double kbMultiplier = damager.getItemInHand() == null ? 0 : damager.getItemInHand().getEnchantmentLevel(Enchantment.KNOCKBACK) * 0.1D;
+		double kbMultiplier = damager.getItemInHand() == null ? 0 : damager.getItemInHand().getEnchantmentLevel(Enchantment.KNOCKBACK) * 0.1D / Main.getInstance().getEnchantmentNerf();
 		@SuppressWarnings("deprecation")
 		double airMultiplier = damaged.isOnGround() ? 1 : 0.5;
 		
 		//Uses the direction instead of the vector between the two players to limit misdirected knockbacks @Murder
 		//Vector knockback = damaged.getLocation().toVector().subtract(damager.getLocation().toVector()).normalize();
 		Vector knockback = damager.getLocation().getDirection().normalize();
-		//Uses kbMultiplier as a factor to limit vector deformation
+		//Uses kbMultiplier as a factor to limit vector deformation @Murder
 		knockback.setX(knockback.getX() * (sprintMultiplier + kbMultiplier) * horizontalMultiplier);
 		knockback.setY(0.35D * airMultiplier * verticalMultiplier);
 		knockback.setZ(knockback.getZ() * (sprintMultiplier + kbMultiplier) * horizontalMultiplier);
