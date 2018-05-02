@@ -54,6 +54,7 @@ public class DamageListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+		long delay = System.currentTimeMillis();
 		if (!(event.getEntity() instanceof Player) || !(event.getDamager() instanceof Player)) {
 			return;
 		}
@@ -94,8 +95,17 @@ public class DamageListener implements Listener {
 			e.printStackTrace();
 		}
 		/*damaged.setVelocity(knockback.multiply(sprintMultiplier).setY(airMultiplier));*/
-		Bukkit.broadcastMessage("Knockback vector: " + knockback);
-		Bukkit.broadcastMessage("Sprint mult.: "+ sprintMultiplier);
-		Bukkit.broadcastMessage("Enchantment mult.: "+ kbMultiplier);
+
+		delay = System.currentTimeMillis() - delay;
+		if(damager.hasPermission("knockback.output")) {
+			damager.sendMessage(ChatColor.GREEN + "[Knockback : Hit Statistics]");
+			damager.sendMessage(ChatColor.GREEN + "Vector: " + ChatColor.WHITE + knockback);
+			damager.sendMessage(ChatColor.GREEN + "Horizontal multiplier: " + ChatColor.WHITE + horizontalMultiplier);
+			damager.sendMessage(ChatColor.GREEN + "Vertical multiplier: " + ChatColor.WHITE + verticalMultiplier);
+			damager.sendMessage(ChatColor.GREEN + "Sprint multiplier: " + ChatColor.WHITE + sprintMultiplier);
+			damager.sendMessage(ChatColor.GREEN + "Enchantment multiplier: " + ChatColor.WHITE + kbMultiplier);
+			damager.sendMessage(ChatColor.GREEN + "Air multiplier: " + ChatColor.WHITE + airMultiplier);
+			damager.sendMessage(ChatColor.GREEN + "Execution time: " + ChatColor.WHITE + delay + "ms");
+		}
 	}
 }
