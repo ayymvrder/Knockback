@@ -81,9 +81,9 @@ public class DamageListener implements Listener {
 		//Vector knockback = damaged.getLocation().toVector().subtract(damager.getLocation().toVector()).normalize();
 		Vector knockback = damager.getLocation().getDirection().normalize();
 		//Uses kbMultiplier as a factor to limit vector deformation @Murder
-		knockback.setX(knockback.getX() * (sprintMultiplier + kbMultiplier) * horizontalMultiplier);
-		knockback.setY(0.35D * airMultiplier * verticalMultiplier);
-		knockback.setZ(knockback.getZ() * (sprintMultiplier + kbMultiplier) * horizontalMultiplier);
+		knockback.setX(knockback.getX() * (sprint + enchantment) * horizontal);
+		knockback.setY(0.35D * air * vertical);
+		knockback.setZ(knockback.getZ() * (sprint + enchantment) * horizontal);
 		
 		try {
 			// Send the velocity packet immediately instead of using setVelocity, which fixes the 'relog bug'
