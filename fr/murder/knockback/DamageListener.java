@@ -5,8 +5,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -70,12 +71,11 @@ public class DamageListener implements Listener {
 			return;
 		}
 
-		double horizontalMultiplier = Main.getInstance().getHorizontalMultiplier();
-		double verticalMultiplier = Main.getInstance().getVerticalMultiplier();
-		double sprintMultiplier = damager.isSprinting() ? 0.8D : 0.5D;
-		double kbMultiplier = damager.getItemInHand() == null ? 0 : damager.getItemInHand().getEnchantmentLevel(Enchantment.KNOCKBACK) * 0.1D / Main.getInstance().getEnchantmentNerf();
-		@SuppressWarnings("deprecation")
-		double airMultiplier = damaged.isOnGround() ? 1 : 0.5;
+		double horizontal = Main.getInstance().getHorizontal();
+		double vertical = Main.getInstance().getVertical();
+		double sprint = damager.isSprinting() ? 0.4D + Main.getInstance().getSprint() : 0.4D;
+		double enchantment = damager.getItemInHand() == null ? 0 : damager.getItemInHand().getEnchantmentLevel(Enchantment.KNOCKBACK) * 0.1D / Main.getInstance().getEnchantment();
+		double air = ((Entity) damaged).isOnGround() ? 1 : Main.getInstance().getAir();
 		
 		//Uses the direction instead of the vector between the two players to limit misdirected knockbacks @Murder
 		//Vector knockback = damaged.getLocation().toVector().subtract(damager.getLocation().toVector()).normalize();
@@ -100,11 +100,11 @@ public class DamageListener implements Listener {
 		if(damager.hasPermission("knockback.output")) {
 			damager.sendMessage(ChatColor.GREEN + "[Knockback : Hit Statistics]");
 			damager.sendMessage(ChatColor.GREEN + "Vector: " + ChatColor.WHITE + knockback);
-			damager.sendMessage(ChatColor.GREEN + "Horizontal multiplier: " + ChatColor.WHITE + horizontalMultiplier);
-			damager.sendMessage(ChatColor.GREEN + "Vertical multiplier: " + ChatColor.WHITE + verticalMultiplier);
-			damager.sendMessage(ChatColor.GREEN + "Sprint multiplier: " + ChatColor.WHITE + sprintMultiplier);
-			damager.sendMessage(ChatColor.GREEN + "Enchantment multiplier: " + ChatColor.WHITE + kbMultiplier);
-			damager.sendMessage(ChatColor.GREEN + "Air multiplier: " + ChatColor.WHITE + airMultiplier);
+			damager.sendMessage(ChatColor.GREEN + "Horizontal: " + ChatColor.WHITE + horizontal);
+			damager.sendMessage(ChatColor.GREEN + "Vertical: " + ChatColor.WHITE + vertical);
+			damager.sendMessage(ChatColor.GREEN + "Sprint: " + ChatColor.WHITE + sprint);
+			damager.sendMessage(ChatColor.GREEN + "Enchantment: " + ChatColor.WHITE + enchantment);
+			damager.sendMessage(ChatColor.GREEN + "Air: " + ChatColor.WHITE + air);
 			damager.sendMessage(ChatColor.GREEN + "Execution time: " + ChatColor.WHITE + delay + "ms");
 		}
 	}
