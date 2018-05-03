@@ -1,6 +1,6 @@
 multiplier:
-  horizontal: 1.0
-  vertical: 1.0
-  sprint: 0.3
-  air: 0.5
-  enchantment: 0.1
+  horizontal: 0.85
+  vertical: 0.95
+  sprint: 0.35
+  air: 0.6
+  enchantment: 0.15
