@@ -12,24 +12,25 @@ public class Main extends JavaPlugin {
 	private static Main instance;
 	
 	private String craftBukkitVersion;
-	private double horizontalMultiplier = 1D;
-	private double verticalMultiplier = 1D;
-	private double enchantmentNerf = 1;
+	private double horizontal;
+	private double vertical;
+	private double sprint;
+	private double air;
+	private double enchantment;
 	
 	@Override
 	public void onEnable() {
 		instance = this;
 		
 		getConfig().options().copyDefaults(true);
-		getConfig().addDefault("multiplier.horizontal", 1D);
-		getConfig().addDefault("multiplier.vertical", 1D);
-		getConfig().addDefault("multiplier.enchantment-nerf", 1);
-		saveConfig();
+		saveDefaultConfig();
 		
 		this.craftBukkitVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-		this.horizontalMultiplier = getConfig().getDouble("multiplier.horizontal");
-		this.verticalMultiplier = getConfig().getDouble("multiplier.vertical");
-		this.enchantmentNerf = getConfig().getDouble("multiplier.enchantment-nerf");
+		this.horizontal = getConfig().getDouble("multiplier.horizontal");
+		this.vertical = getConfig().getDouble("multiplier.vertical");
+		this.sprint = getConfig().getDouble("multiplier.sprint");
+		this.air = getConfig().getDouble("multiplier.air");
+		this.enchantment = getConfig().getDouble("multiplier.enchantment");
 		
 		Bukkit.getPluginManager().registerEvents(new DamageListener(), this);
 		
@@ -43,30 +44,36 @@ public class Main extends JavaPlugin {
 			return true;
 		}
 		
-		if (args.length < 3){
-			sender.sendMessage(ChatColor.RED + "Usage: /" + label + " <horizontal multiplier> <vertical multiplier> <enchantment nerf>.");
+		if (args.length < 5){
+			sender.sendMessage(ChatColor.RED + "Usage: /" + label + " <horizontal> <vertical> <sprint> <air> <enchantment>.");
 			return true;
 		}
 		
-		double horizontalMultiplier = NumberUtils.toDouble(args[0], -1D);
-		double verticalMultiplier = NumberUtils.toDouble(args[1], -1D);
-		double enchantmentNerf = NumberUtils.toDouble(args[2]);
+		double horizontal = NumberUtils.toDouble(args[0], -1D);
+		double vertical = NumberUtils.toDouble(args[1], -1D);
+		double sprint = NumberUtils.toDouble(args[2], -0.3D);
+		double air = NumberUtils.toDouble(args[3], -0.5D);
+		double enchantment = NumberUtils.toDouble(args[4], -0.1D);
 		
-		if (horizontalMultiplier < 0D || verticalMultiplier < 0D || enchantmentNerf <= 0) {
+		if (horizontal < 0D || vertical < 0D || sprint < 0D || air < 0D || enchantment < 0D) {
 			sender.sendMessage(ChatColor.RED + "Invalid multipliers!");
 			return true;
 		}
 		
-		this.horizontalMultiplier = horizontalMultiplier;
-		this.verticalMultiplier = verticalMultiplier;
-		this.enchantmentNerf = enchantmentNerf;
+		this.horizontal = horizontal;
+		this.vertical = vertical;
+		this.sprint = sprint;
+		this.air = air;
+		this.enchantment = enchantment;
 		
-		getConfig().set("multiplier.horizontal", horizontalMultiplier);
-		getConfig().set("multiplier.vertical", verticalMultiplier);
-		getConfig().set("multiplier.vertical", enchantmentNerf);
+		getConfig().set("multiplier.horizontal", horizontal);
+		getConfig().set("multiplier.vertical", vertical);
+		getConfig().set("multiplier.sprint", sprint);
+		getConfig().set("multiplier.air", air);
+		getConfig().set("multiplier.enchantment", enchantment);
 		saveConfig();
 		
-		sender.sendMessage(ChatColor.GREEN + "Successfully updated the multipliers!");
+		sender.sendMessage(ChatColor.GREEN + "Successfully updated multipliers!");
 		return true;
 	}
 	
@@ -78,28 +85,44 @@ public class Main extends JavaPlugin {
 		return craftBukkitVersion;
 	}
 	
-	public double getHorizontalMultiplier() {
-		return horizontalMultiplier;
+	public double getHorizontal() {
+		return horizontal;
 	}
 
-	public void setHorizontalMultiplier(double horizontal) {
-		this.horizontalMultiplier = horizontal;
+	public void setHorizontal(double horizontal) {
+		this.horizontal = horizontal;
 	}
 
-	public double getVerticalMultiplier() {
-		return verticalMultiplier;
+	public double getVertical() {
+		return vertical;
 	}
 
-	public void setVerticalMultiplier(double vertical) {
-		this.verticalMultiplier = vertical;
+	public void setVertical(double vertical) {
+		this.vertical = vertical;
 	}
 	
-	public double getEnchantmentNerf() {
-		return enchantmentNerf;
+	public double getSprint() {
+		return sprint;
 	}
 
-	public void setEnchantmentNerf(double nerf) {
-		this.enchantmentNerf = nerf;
+	public void setSprint(double sprint) {
+		this.sprint = sprint;
+	}
+	
+	public double getAir() {
+		return air;
+	}
+
+	public void setAir(double air) {
+		this.air = air;
+	}
+	
+	public double getEnchantment() {
+		return enchantment;
+	}
+
+	public void setEnchantment(double enchantment) {
+		this.enchantment = enchantment;
 	}
 	
 }
