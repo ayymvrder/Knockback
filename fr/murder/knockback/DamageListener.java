@@ -28,8 +28,7 @@ public class DamageListener implements Listener {
 			Class<?> entityPlayerClass = Class.forName("net.minecraft.server." + Main.getInstance().getCraftBukkitVersion() + ".EntityPlayer");
 			Class<?> packetVelocityClass = Class.forName("net.minecraft.server." + Main.getInstance().getCraftBukkitVersion() + ".PacketPlayOutEntityVelocity");
 			Class<?> playerConnectionClass = Class.forName("net.minecraft.server." + Main.getInstance().getCraftBukkitVersion() + ".PlayerConnection");
-
-			// Get the fields here to improve performance later on			
+		
 			this.fieldPlayerConnection = entityPlayerClass.getField("playerConnection");
 			this.sendPacket = playerConnectionClass.getMethod("sendPacket", packetVelocityClass.getSuperclass());
 			this.packetVelocity = packetVelocityClass.getConstructor(int.class, double.class, double.class, double.class);
@@ -47,7 +46,6 @@ public class DamageListener implements Listener {
 			return;
 		}
 
-		// Cancel the vanilla knockback
 		if (((EntityDamageByEntityEvent) lastDamage).getDamager() instanceof Player) {
 			event.setCancelled(true);
 		}
@@ -77,16 +75,12 @@ public class DamageListener implements Listener {
 		double enchantment = damager.getItemInHand() == null ? 0 : damager.getItemInHand().getEnchantmentLevel(Enchantment.KNOCKBACK) * 0.1D / Main.getInstance().getEnchantment();
 		double air = ((Entity) damaged).isOnGround() ? 1 : Main.getInstance().getAir();
 		
-		//Uses the direction instead of the vector between the two players to limit misdirected knockbacks @Murder
-		//Vector knockback = damaged.getLocation().toVector().subtract(damager.getLocation().toVector()).normalize();
 		Vector knockback = damager.getLocation().getDirection().normalize();
-		//Uses kbMultiplier as a factor to limit vector deformation @Murder
 		knockback.setX(knockback.getX() * (sprint + enchantment) * horizontal);
 		knockback.setY(0.35D * air * vertical);
 		knockback.setZ(knockback.getZ() * (sprint + enchantment) * horizontal);
 		
 		try {
-			// Send the velocity packet immediately instead of using setVelocity, which fixes the 'relog bug'
 			Object entityPlayer = damaged.getClass().getMethod("getHandle").invoke(damaged);
 			Object playerConnection = fieldPlayerConnection.get(entityPlayer);
 			Object packet = packetVelocity.newInstance(damaged.getEntityId(), knockback.getX(), knockback.getY(), knockback.getZ());
@@ -94,7 +88,6 @@ public class DamageListener implements Listener {
 		} catch (SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
 			e.printStackTrace();
 		}
-		/*damaged.setVelocity(knockback.multiply(sprintMultiplier).setY(airMultiplier));*/
 
 		delay = System.currentTimeMillis() - delay;
 		if(damager.hasPermission("knockback.output")) {
