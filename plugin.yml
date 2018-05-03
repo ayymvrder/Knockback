@@ -1,0 +1,8 @@
+name: Knockback
+version: 1.0.2
+author: Murder
+authors: [GitFyu, edodev2]
+main: fr.murder.knockback.Main
+commands:
+  setknockback:
+    aliases: [setkb]
